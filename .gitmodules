@@ -1,0 +1,3 @@
+[submodule "deps/csv2sqlite"]
+	path = deps/csv2sqlite
+	url = https://github.com/leandrocosta/csv2sqlite.git
