@@ -10,6 +10,9 @@ enem2012.db: DADOS_ENEM_2012_CUT.csv QUESTIONARIO_ENEM_2012_CUT.csv
 	sqlite3 .$@.tmp <../summary.sql
 	mv .$@.tmp $@
 
+enem2012.csv: DADOS_ENEM_2012_CUT.csv QUESTIONARIO_ENEM_2012_CUT.csv
+	join -t, -j1 -o0,2.2,2.3,2.4,2.5,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,1.10,1.11,1.12 --header $^ >$@
+
 #   1: NU_INSCRICAO   3: IDADE      4: TP_SEXO    5: COD_MUNICIPIO_INSC   8: ST_CONCLUSAO     12: TP_ESTADO_CIVIL  13: TP_COR_RACA
 #  57: NU_NT_CN      58: NU_NT_CH  59: NU_NT_LC  60: NU_NT_MT            80: NU_NOTA_REDACAO
 DADOS_ENEM_2012_CUT.csv: DADOS_ENEM_2012.csv
