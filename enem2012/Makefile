@@ -76,11 +76,11 @@ QUESTIONARIO_ENEM_2012_CUT.csv: QUESTIONARIO_ENEM_2012.csv
 
 DADOS_ENEM_2012.csv: microdados_enem2012.zip
 	unzip -j $< DADOS/$@
-	touch $@
+	dos2unix $@
 
 QUESTIONARIO_ENEM_2012.csv: microdados_enem2012.zip
 	unzip -j $< DADOS/$@
-	touch $@
+	dos2unix $@
 
 microdados_enem2012.zip:
 	wget ftp://ftp.inep.gov.br/microdados/$@ -O .$@.tmp
