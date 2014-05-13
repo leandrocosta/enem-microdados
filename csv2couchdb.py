@@ -2,17 +2,21 @@
 #coding=utf-8
 
 """Usage:
-    csv2couchdb.py --csv-file=FILE --couchdb-url=URL --db-name=NAME --id-attr=ATTR
+    csv2couchdb.py --csv-file=FILE --couchdb-url=URL --db-name=NAME --id-attr=ATTR --bulk-size=SIZE
+    csv2couchdb.py -h | --help
 
 Options:
+    -h --help                   Show this screen.
     -f FILE --csv-file=FILE
     -u URL --couchdb-url=URL
     -n NAME --db-name=NAME
     -i ATTR --id-attr=ATTR
+    -b SIZE --bulk-size SIZE
 """
 from docopt import docopt
 import csv
 import pycouchdb
+from progressbar import ProgressBar, Percentage, Bar, ETA
 
 def _guess_types(fileobj, max_sample_size=100):
     '''Guess column types (as for SQLite) of CSV.
@@ -68,15 +72,24 @@ if __name__ == '__main__':
 
     try:
         db = server.database(arguments['--db-name'])
-    except:
+    except Exception, e:
+        print 'error trying to database instance named %s [%s]' % (arguments['--db-name'], e)
         db = server.create(arguments['--db-name'])
+        print 'database %s created' % arguments['--db-name']
 
     fo = open(arguments['--csv-file'])
     reader = csv.reader(fo)
 
     types = _guess_types(fo)
     fo.seek(0)
+    numdocs = len(fo.readlines())-1
+    fo.seek(0)
     headers = reader.next()
+
+    i = 0
+    docs = []
+    print 'Saving: %d docs' % numdocs
+    pbar = ProgressBar(widgets=[Percentage(), ' ', Bar(), ' ', ETA()], maxval=numdocs).start()
 
     for row in reader:
         row = [
@@ -93,4 +106,14 @@ if __name__ == '__main__':
 
         doc['_id'] = str(doc[arguments['--id-attr']])
 
-        db.save(doc)
+        #db.save(doc)
+
+        docs.append(doc)
+        i = i+1
+
+        if (len(docs) >= int(arguments['--bulk-size'])):
+            db.save_bulk(docs)
+            pbar.update(i)
+            docs = []
+
+    pbar.finish()
