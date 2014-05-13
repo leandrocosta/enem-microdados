@@ -76,11 +76,11 @@ QUESTIONARIO_SOCIO_ECONOMICO_ENEM_2011.csv: QUESTIONARIO_SOCIO_ECONOMICO_ENEM_20
 
 DADOS_ENEM_2011.TXT: microdados_enem2011.zip
 	unzip -j $< DADOS/$@
-	touch $@
+	dos2unix $@
 
 QUESTIONARIO_SOCIO_ECONOMICO_ENEM_2011.TXT: microdados_enem2011.zip
 	unzip -j $< DADOS/$@
-	touch $@
+	dos2unix $@
 
 microdados_enem2011.zip:
 	wget ftp://ftp.inep.gov.br/microdados/$@ -O .$@.tmp
