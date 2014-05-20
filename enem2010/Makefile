@@ -10,10 +10,13 @@ enem2010.db: DADOS_ENEM_2010_CUT.csv QUESTIONARIO_SOCIO_ECONOMICO_ENEM_2010_CUT.
 	sqlite3 .$@.tmp <../summary.sql
 	mv .$@.tmp $@
 
+enem2010.csv: DADOS_ENEM_2010_CUT.csv QUESTIONARIO_SOCIO_ECONOMICO_ENEM_2010_CUT.csv
+	join -t, -j1 -o0,2.2,2.3,2.4,2.5,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,1.10,1.11,1.12 --header $^ >$@
+
 #   1: NU_INSCRICAO   3: IDADE      4: TP_SEXO    5: COD_MUNICIPIO_INSC   8: ST_CONCLUSAO     30: TP_ESTADO_CIVIL  31: TP_COR_RACA
 #  57: NU_NT_CN      58: NU_NT_CH  59: NU_NT_LC  60: NU_NT_MT            80: NU_NOTA_REDACAO
 DADOS_ENEM_2010_CUT.csv: DADOS_ENEM_2010.csv
-	cut -d ',' -f1,3-5,8,30-31,46-49,69 $^ | sed -e 's/\"//g' | sed -e 's/\,\./\,/g' >$@
+	cut -d ',' -f1,3-5,8,30-31,46-49,69 $^ | sed -e 's/\"//g' | sed -e 's/\,\./\,/g' | sort -n >$@
 
 #  1: NU_INSCRICAO
 #
@@ -60,7 +63,7 @@ DADOS_ENEM_2010_CUT.csv: DADOS_ENEM_2010.csv
 # H	Não freqüentei a escola
 
 QUESTIONARIO_SOCIO_ECONOMICO_ENEM_2010_CUT.csv: QUESTIONARIO_SOCIO_ECONOMICO_ENEM_2010.csv
-	cut -d ',' -f1,4-6,35 $^ | sed -e 's/\"//g' >$@
+	cut -d ',' -f1,4-6,35 $^ | sed -e 's/\"//g' | sort -n >$@
 
 DADOS_ENEM_2010.csv: DADOS_ENEM_2010.txt
 	cat DADOS_ENEM_2010_FIELDNAMES.txt >$@
