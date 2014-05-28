@@ -1,3 +1,6 @@
+csv: enem2011.csv
+dicionario: Dicionаrio_Microdados_ENEM_2011.xlsx
+
 enem2011.json: enem2011.db
 	../sqlite2json.py enem2011.db >.$@.tmp
 	mv .$@.tmp $@
@@ -13,7 +16,15 @@ enem2011.db: DADOS_ENEM_2011_CUT.csv QUESTIONARIO_SOCIO_ECONOMICO_ENEM_2011_CUT.
 enem2011.csv: DADOS_ENEM_2011_CUT.csv QUESTIONARIO_SOCIO_ECONOMICO_ENEM_2011_CUT.csv
 	join -t, -j1 -o0,2.2,2.3,2.4,2.5,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,1.10,1.11,1.12 --header $^ >$@
 
-#   1: NU_INSCRICAO   3: IDADE      4: TP_SEXO    5: COD_MUNICIPIO_INSC   8: ST_CONCLUSAO     30: TP_ESTADO_CIVIL  31: TP_COR_RACA
+#   1: NU_INSCRICAO   3: IDADE      4: TP_SEXO    5: COD_MUNICIPIO_INSC
+#
+#   8: ST_CONCLUSAO
+#   1    Já conclui o Ensino Médio
+#   2    Estou cursando e concluirei o Ensino Médio em 2011
+#   3    Estou cursando e concluirei o Ensino Médio após 2011
+#   4    Não conclui e não estou cursando o Ensino Médio
+#
+#   30: TP_ESTADO_CIVIL  31: TP_COR_RACA
 #  57: NU_NT_CN      58: NU_NT_CH  59: NU_NT_LC  60: NU_NT_MT            80: NU_NOTA_REDACAO
 DADOS_ENEM_2011_CUT.csv: DADOS_ENEM_2011.csv
 	cut -d ',' -f1,3-5,8,30-31,46-49,69 $^ | sed -e 's/\"//g' | sed -e 's/\,\./\,/g' >$@
@@ -84,6 +95,10 @@ DADOS_ENEM_2011.TXT: microdados_enem2011.zip
 QUESTIONARIO_SOCIO_ECONOMICO_ENEM_2011.TXT: microdados_enem2011.zip
 	unzip -j $< DADOS/$@
 	dos2unix $@
+
+Dicionаrio_Microdados_ENEM_2011.xlsx: microdados_enem2011.zip
+	unzip -j $< $@
+	touch $@
 
 microdados_enem2011.zip:
 	wget ftp://ftp.inep.gov.br/microdados/$@ -O .$@.tmp

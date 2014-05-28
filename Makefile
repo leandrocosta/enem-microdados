@@ -1,7 +1,7 @@
-all:
-	make -C enem2012
-	make -C enem2011
-	make -C enem2010
+csv:
+	make -C enem2012 csv
+	make -C enem2011 csv
+	make -C enem2010 csv
 
 clean:
 	make -C enem2012 clean

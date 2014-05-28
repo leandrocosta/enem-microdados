@@ -1,3 +1,6 @@
+csv: enem2012.csv
+dicionario: Dicionаrio_Microdados_ENEM_2012.xlsx
+
 enem2012.json: enem2012.db
 	../sqlite2json.py enem2012.db >.$@.tmp
 	mv .$@.tmp $@
@@ -13,7 +16,15 @@ enem2012.db: DADOS_ENEM_2012_CUT.csv QUESTIONARIO_ENEM_2012_CUT.csv
 enem2012.csv: DADOS_ENEM_2012_CUT.csv QUESTIONARIO_ENEM_2012_CUT.csv
 	join -t, -j1 -o0,2.2,2.3,2.4,2.5,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,1.10,1.11,1.12 --header $^ >$@
 
-#   1: NU_INSCRICAO   3: IDADE      4: TP_SEXO    5: COD_MUNICIPIO_INSC   8: ST_CONCLUSAO     12: TP_ESTADO_CIVIL  13: TP_COR_RACA
+#   1: NU_INSCRICAO   3: IDADE      4: TP_SEXO    5: COD_MUNICIPIO_INSC
+#
+#   8: ST_CONCLUSAO
+#   1    Já conclui o Ensino Médio
+#   2    Estou cursando e concluirei o Ensino Médio em 2012
+#   3    Estou cursando e concluirei o Ensino Médio após 2012
+#   4    Não conclui e não estou cursando o Ensino Médio
+#
+#  12: TP_ESTADO_CIVIL  13: TP_COR_RACA
 #  57: NU_NT_CN      58: NU_NT_CH  59: NU_NT_LC  60: NU_NT_MT            80: NU_NOTA_REDACAO
 DADOS_ENEM_2012_CUT.csv: DADOS_ENEM_2012.csv
 	cut -d ',' -f1,3-5,8,12-13,57-60,80 $^ | sed -e 's/\"//g' | sed -e 's/\,\./\,/g' >$@
@@ -81,6 +92,10 @@ DADOS_ENEM_2012.csv: microdados_enem2012.zip
 QUESTIONARIO_ENEM_2012.csv: microdados_enem2012.zip
 	unzip -j $< DADOS/$@
 	dos2unix $@
+
+Dicionаrio_Microdados_ENEM_2012.xlsx: microdados_enem2012.zip
+	unzip -j $< $@
+	touch $@
 
 microdados_enem2012.zip:
 	wget ftp://ftp.inep.gov.br/microdados/$@ -O .$@.tmp
